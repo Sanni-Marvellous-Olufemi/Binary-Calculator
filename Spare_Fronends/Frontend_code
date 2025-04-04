@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #8f94fb;
+            --accent-color: #43e97b;
+            --accent-color-2: #38f9d7;
+            --error-color: #ff6b6b;
+            --bg-dark: #1e1e2f;
+            --text-light: #f9f9f9;
+            --text-dark: #333;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            transition: background 0.5s ease;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        input, select {
+            background-color: #2c2c3e;
+            color: var(--text-light);
+        }
+
+        button {
+            background: linear-gradient(to right, var(--accent-color), var(--accent-color-2));
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+            animation: fadeIn 1s ease;
+        }
+
+        .error {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>✨ Base Converter ✨</h2>
+        <input type="text" id="number" placeholder="Enter number" required>
+        <select id="base">
+            <option value="">Select Base</option>
+            <script>
+                for (let i = 2; i <= 16; i++) {
+                    document.write(`<option value="${i}">Base ${i}</option>`);
+                }
+            </script>
+        </select>
+        <select id="convertBase">
+            <option value="">Convert To</option>
+            <script>
+                for (let i = 2; i <= 16; i++) {
+                    document.write(`<option value="${i}">Base ${i}</option>`);
+                }
+            </script>
+        </select>
+        <button onclick="convertBase()">Convert</button>
+        <p id="result"></p>
+        <p class="error" id="error"></p>
+    </div>
+
+    <script>
+        async function convertBase() {
+    
+    const number = document.getElementById("number").value.trim().toUpperCase();
+    const base = parseInt(document.getElementById("base").value);
+    const convertBase = parseInt(document.getElementById("convertBase").value);
+    const errorEl = document.getElementById("error");
+    const resultEl = document.getElementById("result");
+
+    errorEl.textContent = "";
+    resultEl.textContent = "";
+
+    if (!number || isNaN(base) || isNaN(convertBase)) {
+        errorEl.textContent = "Please enter a valid number and select both bases.";
+        return;
+    }
+
+    const payload = { number, base, convertBase };
+    console.log("Sending payload:", payload); // Add this line
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/convert", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            resultEl.textContent = `✅ Converted Result: ${data.result}`;
+            resultEl.style.opacity = 1;
+            addHistory(`${number} (Base ${base}) → ${data.result} (Base ${convertBase})`);
+        } else {
+            errorEl.textContent = data.error;
+        }
+    } catch (err) {
+        errorEl.textContent = "❌ Could not connect to server.";
+        console.error("Fetch error:", err); // Add this line
+    }
+}
+
+    </script>
+</body>
+</html>

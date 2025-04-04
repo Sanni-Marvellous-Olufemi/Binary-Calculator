@@ -1,0 +1,90 @@
+def base_10_to_any_base(number, base, base_convert):
+    try:
+        number = int(number)
+        answer = ""
+        if base != 10:
+            raise ValueError("This function only supports base 10 conversion.")  
+
+        while number > 0:
+            remainder = number % base_convert 
+            if remainder < 10:
+                answer += str(remainder)
+            else:
+                answer += chr(ord('A') + remainder - 10)  # Convert 10-15 to A-F
+            number //= base_convert
+
+        return answer[::-1] if answer else "0"  # Reverse the answer to get the correct order
+    except ValueError as e:
+        print(f"Error: {e}")
+        return None
+
+
+def any_base_to_base_10(number, base):
+    try:
+        if not (2 <= base <= 16):
+            raise ValueError("Base must be between 2 and 16.")
+
+        number = number.upper()  # Ensure uppercase for hexadecimal digits
+        answer = 0
+        b = len(number)
+
+        for i in range(b):
+            char = number[i]
+            if char.isdigit():
+                digit = int(char)
+            elif 'A' <= char <= 'F':
+                digit = ord(char) - ord('A') + 10
+            else:
+                raise ValueError(f"Invalid character '{char}' for base {base}.")
+
+            if digit >= base:
+                raise ValueError(f"Digit '{char}' is not valid for base {base}.")
+
+            answer += digit * (base ** (b - i - 1))
+
+        return answer
+    except ValueError as e:
+        print(f"Error: {e}")
+        return None
+
+
+def reverse_answer(number, base, base_convert):
+    answer = base_10_to_any_base(number, base, base_convert)
+    return answer[::-1] if answer else None  # Reverse only if answer is valid
+
+
+def any_base_to_any_base():
+    while True:
+        print("\nThis is a calculator to convert numbers from any base (2-16) to any other base (2-16).")
+
+        number = input("Enter the number you want to convert: ").strip()
+        try:
+            base = int(input("Enter the base of the number (2-16): ").strip())
+            if not (2 <= base <= 16):
+                raise ValueError("Base is out of range.")
+
+            base_convert = int(input("Enter the base to convert to (2-16): ").strip())
+            if not (2 <= base_convert <= 16):
+                raise ValueError("Conversion base is out of range.")
+
+            if base == 10:
+                answer = reverse_answer(number, base, base_convert)
+            else:
+                decimal_value = any_base_to_base_10(number, base)
+                if decimal_value is not None:
+                    answer = reverse_answer(decimal_value, 10, base_convert)
+                else:
+                    answer = None
+
+            if answer is not None:
+                print(f"Converted result: {answer}")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        d = input("Do you wish to continue? (Y/N): ").strip().upper()
+        if d != "Y":
+            break
+
+
+any_base_to_any_base()
