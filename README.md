@@ -22,12 +22,12 @@ Whether you're debugging bitwise logic, solving computer science homework, or ju
 
 # Tech Stack
 
-- **Frontend**:
+**Frontend**:
 - HTML5, CSS3, JavaScript
 - Responsive design with animated transitions
 - Hosted on Netlify
 
-- **Backend**:
+**Backend**:
 - Flask (Python)
 - CORS-enabled REST API for seamless frontend integration
 - Hosted on Render
