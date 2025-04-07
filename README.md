@@ -35,6 +35,7 @@ Whether you're debugging bitwise logic, solving computer science homework, or ju
 
 # Live Demo
 bincalc.netlify.app
+https://bincalc.netlify.app/
 
 # Author
 Built by Sanni Marvellous Olufemi
